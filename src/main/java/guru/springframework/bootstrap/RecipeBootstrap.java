@@ -1,4 +1,4 @@
-package guru.springframework;
+package guru.springframework.bootstrap;
 
 import guru.springframework.domain.*;
 import guru.springframework.repositories.CategoryRepository;
