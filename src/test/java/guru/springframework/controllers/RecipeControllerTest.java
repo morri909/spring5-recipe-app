@@ -83,4 +83,15 @@ public class RecipeControllerTest {
 
 		Mockito.verify(recipeService).saveRecipeCommand(Mockito.any(RecipeCommand.class));
 	}
+
+	@Test
+	public void delete() throws Exception {
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
+
+		mockMvc.perform(get("/recipe/1/delete"))
+				.andExpect(status().isFound())
+				.andExpect(view().name("redirect:/"));
+
+		Mockito.verify(recipeService).deleteById(Mockito.anyLong());
+	}
 }
