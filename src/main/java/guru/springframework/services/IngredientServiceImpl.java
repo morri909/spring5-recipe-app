@@ -69,6 +69,7 @@ public class IngredientServiceImpl implements IngredientService {
 		if (ingredientOptional.isPresent()) {
 			Ingredient ingredient = ingredientOptional.get();
 			ingredient.setDescription(ingredientCommand.getDescription());
+			ingredient.setAmount(ingredientCommand.getAmount());
 			Optional<UnitOfMeasure> unitOfMeasureOptional = unitOfMeasureRepository.findById(ingredientCommand.getUnitOfMeasure().getId());
 			if (!unitOfMeasureOptional.isPresent()) {
 				log.error("Unable to find uom: " + ingredientCommand.getUnitOfMeasure().getId());
