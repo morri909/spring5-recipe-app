@@ -79,7 +79,7 @@ public class RecipeControllerTest {
 
 		mockMvc.perform(post("/recipe", recipeCommand))
 				.andExpect(status().isFound())
-				.andExpect(view().name("redirect:/recipe/show/"  + recipeCommand.getId()));
+				.andExpect(view().name("redirect:/recipe/"  + recipeCommand.getId() + "/show"));
 
 		Mockito.verify(recipeService).saveRecipeCommand(Mockito.any(RecipeCommand.class));
 	}
