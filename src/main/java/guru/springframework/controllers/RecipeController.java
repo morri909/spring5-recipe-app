@@ -5,10 +5,7 @@ import guru.springframework.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequestMapping("/recipe")
@@ -21,19 +18,19 @@ public class RecipeController {
 		this.recipeService = recipeService;
 	}
 
-	@RequestMapping("/{id}/show")
+	@GetMapping("/{id}/show")
 	public String showById(@PathVariable Long id, Model model) {
 		model.addAttribute("recipe", recipeService.findById(id));
 		return "recipe/show";
 	}
 
-	@RequestMapping("/new")
+	@GetMapping("/new")
 	public String newRecipe(Model model) {
 		model.addAttribute("recipe", new RecipeCommand());
 		return "recipe/recipeform";
 	}
 
-	@RequestMapping("/{id}/update")
+	@GetMapping("/{id}/update")
 	public String updateRecipe(@PathVariable Long id, Model model) {
 		model.addAttribute("recipe", recipeService.findCommandById(id));
 		return "recipe/recipeform";
@@ -45,7 +42,7 @@ public class RecipeController {
 		return "redirect:/recipe/" + savedRecipeCommand.getId() + "/show";
 	}
 
-	@RequestMapping("/{id}/delete")
+	@GetMapping("/{id}/delete")
 	public String delete(@PathVariable Long id) {
 		log.debug("Deleting id: " + id);
 		recipeService.deleteById(id);
