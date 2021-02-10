@@ -28,6 +28,16 @@ public class IngredientController {
 		return "recipe/ingredient/list";
 	}
 
+	@GetMapping("/{recipeId}/ingredient/new")
+	public String newForm(@PathVariable Long recipeId, Model model) {
+		recipeService.findCommandById(recipeId);
+		IngredientCommand ingredientCommand = new IngredientCommand();
+		ingredientCommand.setRecipeId(recipeId);
+		model.addAttribute("ingredient", ingredientCommand);
+		model.addAttribute("uomList", unitOfMeasureService.listAll());
+		return "recipe/ingredient/ingredientform";
+	}
+
 	@GetMapping("/{recipeId}/ingredient/{id}/show")
 	public String show(@PathVariable Long recipeId, @PathVariable Long id, Model model) {
 		model.addAttribute("ingredient", ingredientService.findByRecipeIdAndId(recipeId, id));

@@ -71,6 +71,23 @@ public class IngredientControllerTest {
 	}
 
 	@Test
+	public void newForm() throws Exception {
+		RecipeCommand recipeCommand = new RecipeCommand();
+		recipeCommand.setId(1L);
+
+		Mockito.when(recipeService.findCommandById(Mockito.anyLong())).thenReturn(recipeCommand);
+		Mockito.when(unitOfMeasureService.listAll()).thenReturn(new HashSet<>());
+
+		mockMvc.perform(get("/recipe/1/ingredient/new"))
+				.andExpect(status().isOk())
+				.andExpect(view().name("recipe/ingredient/ingredientform"))
+				.andExpect(model().attributeExists("ingredient"))
+				.andExpect(model().attributeExists("uomList"));
+
+		Mockito.verify(recipeService).findCommandById(Mockito.anyLong());
+	}
+
+	@Test
 	public void update() throws Exception {
 		// given
 		Mockito.when(ingredientService.findByRecipeIdAndId(Mockito.anyLong(), Mockito.anyLong()))
