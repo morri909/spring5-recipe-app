@@ -122,4 +122,12 @@ public class IngredientControllerTest {
 				.andExpect(view().name("redirect:" + redirectUrl));
 		Mockito.verify(ingredientService).saveIngredientCommand(Mockito.any(IngredientCommand.class));
 	}
+
+	@Test
+	public void delete() throws Exception {
+		mockMvc.perform(get("/recipe/1/ingredient/2/delete"))
+				.andExpect(status().isFound())
+				.andExpect(view().name("redirect:/recipe/1/ingredients"));
+		Mockito.verify(ingredientService).deleteById(Mockito.anyLong(), Mockito.anyLong());
+	}
 }

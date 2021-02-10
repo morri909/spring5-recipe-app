@@ -12,9 +12,7 @@ import guru.springframework.repositories.UnitOfMeasureRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.Optional;
 
@@ -28,6 +26,9 @@ public class IngredientServiceImplTest {
 	RecipeRepository recipeRepository;
 	@Mock
 	UnitOfMeasureRepository unitOfMeasureRepository;
+
+	@Captor
+	ArgumentCaptor<Recipe> recipeArgumentCaptor;
 
 	IngredientService sut;
 
@@ -94,5 +95,27 @@ public class IngredientServiceImplTest {
 		Assert.assertNotNull(result);
 		Mockito.verify(recipeRepository).save(Mockito.any(Recipe.class));
 		Mockito.verify(ingredientToIngredientCommand).convert(Mockito.any(Ingredient.class));
+	}
+
+	@Test
+	public void deleteById() {
+		Recipe recipe = new Recipe();
+		Ingredient ingredient1 = new Ingredient();
+		ingredient1.setId(1L);
+		recipe.getIngredients().add(ingredient1);
+		Ingredient ingredient2 = new Ingredient();
+		ingredient2.setId(2L);
+		recipe.getIngredients().add(ingredient2);
+		Ingredient ingredient3 = new Ingredient();
+		ingredient3.setId(3L);
+		recipe.getIngredients().add(ingredient3);
+		Mockito.when(recipeRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(recipe));
+
+		sut.deleteById(1L, 2L);
+
+		Mockito.verify(recipeRepository).save(recipeArgumentCaptor.capture());
+		Recipe savedReciped = recipeArgumentCaptor.getValue();
+		Assert.assertNotNull(savedReciped);
+		Assert.assertEquals(2, savedReciped.getIngredients().size());
 	}
 }
