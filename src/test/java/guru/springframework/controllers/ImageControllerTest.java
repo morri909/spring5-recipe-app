@@ -3,11 +3,13 @@ package guru.springframework.controllers;
 import guru.springframework.commands.RecipeCommand;
 import guru.springframework.services.ImageService;
 import guru.springframework.services.RecipeService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -59,5 +61,30 @@ public class ImageControllerTest {
 				.andExpect(header().string("Location", "/recipe/1/show"));
 
 		Mockito.verify(imageService).saveImageFile(Mockito.anyLong(), Mockito.any());
+	}
+
+	@Test
+	public void renderImageFromDb() throws Exception {
+		RecipeCommand command = new RecipeCommand();
+		command.setId(1L);
+
+		String test = "this is a test";
+		Byte[] bytesBoxed = new Byte[test.getBytes().length];
+		for (int i = 0; i < test.getBytes().length; i++) {
+			bytesBoxed[i] = test.getBytes()[i];
+		}
+
+		command.setImage(bytesBoxed);
+
+		Mockito.when(recipeService.findCommandById(Mockito.anyLong())).thenReturn(command);
+
+		//when
+		MockHttpServletResponse response = mockMvc.perform(get("/recipe/1/recipeimage"))
+				.andExpect(status().isOk())
+				.andReturn().getResponse();
+
+		byte[] responseBytes = response.getContentAsByteArray();
+
+		Assert.assertEquals(test.getBytes().length, responseBytes.length);
 	}
 }
