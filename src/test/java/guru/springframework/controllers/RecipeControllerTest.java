@@ -2,6 +2,7 @@ package guru.springframework.controllers;
 
 import guru.springframework.commands.RecipeCommand;
 import guru.springframework.domain.Recipe;
+import guru.springframework.exceptions.NotFoundException;
 import guru.springframework.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +23,13 @@ public class RecipeControllerTest {
 
 	RecipeController sut;
 
+	MockMvc mockMvc;
+
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		sut = new RecipeController(recipeService);
+		mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
 	}
 
 	@Test
@@ -33,8 +37,6 @@ public class RecipeControllerTest {
 		Recipe recipe = new Recipe();
 		recipe.setId(1L);
 		Mockito.when(recipeService.findById(Mockito.any(Long.class))).thenReturn(recipe);
-
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
 
 		mockMvc.perform(get("/recipe/" + recipe.getId() + "/show"))
 				.andExpect(status().isOk())
@@ -44,8 +46,6 @@ public class RecipeControllerTest {
 
 	@Test
 	public void newRecipe() throws Exception {
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
-
 		mockMvc.perform(get("/recipe/new"))
 				.andExpect(status().isOk())
 				.andExpect(view().name("recipe/recipeform"))
@@ -58,8 +58,6 @@ public class RecipeControllerTest {
 		recipeCommand.setId(1L);
 
 		Mockito.when(recipeService.findCommandById(Mockito.anyLong())).thenReturn(recipeCommand);
-
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
 
 		mockMvc.perform(get("/recipe/" + recipeCommand.getId() + "/update"))
 				.andExpect(status().isOk())
@@ -75,8 +73,6 @@ public class RecipeControllerTest {
 		Mockito.when(recipeService.saveRecipeCommand(Mockito.any(RecipeCommand.class)))
 				.thenReturn(recipeCommand);
 
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
-
 		mockMvc.perform(post("/recipe", recipeCommand))
 				.andExpect(status().isFound())
 				.andExpect(view().name("redirect:/recipe/"  + recipeCommand.getId() + "/show"));
@@ -86,12 +82,18 @@ public class RecipeControllerTest {
 
 	@Test
 	public void delete() throws Exception {
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
-
 		mockMvc.perform(get("/recipe/1/delete"))
 				.andExpect(status().isFound())
 				.andExpect(view().name("redirect:/"));
 
 		Mockito.verify(recipeService).deleteById(Mockito.anyLong());
+	}
+
+	@Test
+	public void getRecipeNotFound() throws Exception {
+		Mockito.when(recipeService.findById(Mockito.anyLong())).thenThrow(NotFoundException.class);
+
+		mockMvc.perform(get("/recipe/1/show"))
+				.andExpect(status().isNotFound());
 	}
 }
