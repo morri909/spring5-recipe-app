@@ -29,7 +29,9 @@ public class RecipeControllerTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		sut = new RecipeController(recipeService);
-		mockMvc = MockMvcBuilders.standaloneSetup(sut).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(sut)
+				.setControllerAdvice(new ControllerExceptionHandler())
+				.build();
 	}
 
 	@Test
