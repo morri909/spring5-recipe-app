@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -71,15 +72,37 @@ public class RecipeControllerTest {
 	public void save() throws Exception {
 		RecipeCommand recipeCommand = new RecipeCommand();
 		recipeCommand.setId(1L);
+		recipeCommand.setDescription("test");
+		recipeCommand.setDirections("this is a test");
+
+		Mockito.when(recipeService.saveRecipeCommand(Mockito.any(RecipeCommand.class)))
+				.thenReturn(recipeCommand);
+
+		mockMvc.perform(post("/recipe")
+					.contentType(MediaType.APPLICATION_FORM_URLENCODED)
+					.param("id", recipeCommand.getId().toString())
+					.param("description", recipeCommand.getDescription())
+					.param("directions", recipeCommand.getDirections())
+				)
+				.andExpect(status().isFound())
+				.andExpect(view().name("redirect:/recipe/"  + recipeCommand.getId() + "/show"));
+
+		Mockito.verify(recipeService).saveRecipeCommand(Mockito.any(RecipeCommand.class));
+	}
+
+	@Test
+	public void saveValidationFail() throws Exception {
+		RecipeCommand recipeCommand = new RecipeCommand();
+		recipeCommand.setId(1L);
 
 		Mockito.when(recipeService.saveRecipeCommand(Mockito.any(RecipeCommand.class)))
 				.thenReturn(recipeCommand);
 
 		mockMvc.perform(post("/recipe", recipeCommand))
-				.andExpect(status().isFound())
-				.andExpect(view().name("redirect:/recipe/"  + recipeCommand.getId() + "/show"));
+				.andExpect(status().isOk())
+				.andExpect(view().name("recipe/recipeform"));
 
-		Mockito.verify(recipeService).saveRecipeCommand(Mockito.any(RecipeCommand.class));
+		Mockito.verify(recipeService, Mockito.never()).saveRecipeCommand(Mockito.any(RecipeCommand.class));
 	}
 
 	@Test
