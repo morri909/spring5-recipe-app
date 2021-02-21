@@ -44,7 +44,7 @@ public class RecipeController {
 	}
 
 	@PostMapping("")
-	public String save(@ModelAttribute @Valid RecipeCommand recipeCommand, BindingResult bindingResult) {
+	public String save(@ModelAttribute("recipe") @Valid RecipeCommand recipeCommand, BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
 			bindingResult.getAllErrors().forEach(error -> log.debug(error.toString()));
 			return RECIPE_RECIPEFORM;
