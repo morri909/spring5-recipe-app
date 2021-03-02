@@ -4,6 +4,7 @@ spring:
     username: sfg_prod_user
     password: guru
     driver-class-name: com.mysql.cj.jdbc.Driver
+#    initialization-mode: always
   jpa:
     hibernate:
       ddl-auto: validate

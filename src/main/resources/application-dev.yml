@@ -4,9 +4,18 @@ spring:
     username: sfg_dev_user
     password: guru
     driver-class-name: com.mysql.cj.jdbc.Driver
+#    initialization-mode: always
   jpa:
     hibernate:
       ddl-auto: validate
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     database: mysql
     show-sql: true
+#    properties:
+#      javax:
+#        persistence:
+#          schema-generation:
+#            create-source: metadata
+#            scripts:
+#              action: create
+#              create-target: guru_database_create.sql
